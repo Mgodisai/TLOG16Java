@@ -1,4 +1,10 @@
 package com.mgodisai;
 
-public class Task {
+import java.time.LocalTime;
+
+class Task {
+    private String taskId;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private String comment;
 }
