@@ -4,6 +4,12 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is the WorkMonth class
+ * @author Tamás Varga
+ * @version 0.1.0
+ * @since 2019-03-26
+ */
 public class WorkMonth {
     private List<WorkDay> days;
     private YearMonth date;

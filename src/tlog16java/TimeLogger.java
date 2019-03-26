@@ -3,6 +3,12 @@ package tlog16java;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is the TimeLogger class
+ * @author Tamás Varga
+ * @version 0.1.0
+ * @since 2019-03-26
+ */
 public class TimeLogger {
     private List<WorkMonth> months;
 
