@@ -1,5 +1,13 @@
+package tlog16java;
+
 import java.time.LocalTime;
 
+/**
+ * This is the Task class
+ * @author Tamás Varga
+ * @version 0.1.0
+ * @since 2019-03-26
+ */
 public class Task {
     private String taskId;
     private LocalTime startTime;
