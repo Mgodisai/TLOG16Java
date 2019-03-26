@@ -1,10 +1,8 @@
-package com.mgodisai;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-class WorkDay {
+public class WorkDay {
     private List<Task> tasks;
     private long requiredMinPerDay;
     private LocalDate actualDay;
@@ -61,8 +59,9 @@ class WorkDay {
     public void addTask(Task t) {
         if (t.isMultipleQuarterHour() && isSeparatedTime(t)) {
             tasks.add(t);
+            System.out.println("A hozzáadás sikeres! "+this.actualDay+" - "+t.getTaskId()+": "+t.getComment());
         } else {
-            // will be implemented later
+            System.out.println("SIKERTELEN! "+this.actualDay+" - "+t.getTaskId()+": "+t.getComment());
         }
     }
 

@@ -1,8 +1,6 @@
-package com.mgodisai;
-
 import java.time.LocalTime;
 
-class Task {
+public class Task {
     private String taskId;
     private LocalTime startTime;
     private LocalTime endTime;
