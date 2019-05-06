@@ -68,8 +68,7 @@ public class TaskTest {
 
     @DisplayName("Testing different methods")
     @Test
-    void methodTests() throws NotExpectedTimeOrderException, EmptyTimeFieldException,
-            InvalidTimeFieldException, InvalidTaskIdException, NoTaskIdException {
+    void methodTests()  {
 
         Task task1 = new Task("1234", "Second test task1", "7:30", "8:45");
         Task task2 = new Task("4567");

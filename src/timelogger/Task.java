@@ -4,13 +4,6 @@ import timelogger.exceptions.*;
 
 import java.time.LocalTime;
 
-/**
- * This is the Task class
- *
- * @author Tamás Varga
- * @version 0.2.0
- * @since 2019-03-26
- */
 public class Task implements Comparable<Task> {
     private static final String REDMINE_TASK_ID_PATTERN = "\\d{4}";
     private static final String LTT_TASK_ID_PATTERN = "LT-\\d{4}";
@@ -19,40 +12,58 @@ public class Task implements Comparable<Task> {
     private LocalTime endTime;
     private String comment;
 
-    public Task(String taskId, String comment, LocalTime startTime, LocalTime endTime)
-            throws NotExpectedTimeOrderException, EmptyTimeFieldException,
-            InvalidTaskIdException, NoTaskIdException {
-
+    public Task(String taskId, String comment, LocalTime startTime, LocalTime endTime) {
         setTaskId(taskId);
         setStartTime(startTime);
         setEndTime(endTime);
         setComment(comment);
     }
 
-    public Task(String taskId, String comment, int startHour, int startMin, int endHour, int endMin)
-            throws NotExpectedTimeOrderException, EmptyTimeFieldException,
-            InvalidTimeFieldException, InvalidTaskIdException, NoTaskIdException {
-
+    public Task(String taskId, String comment, int startHour, int startMin, int endHour, int endMin) {
         this(taskId, comment, timeToLocalTime(startHour, startMin), timeToLocalTime(endHour, endMin));
     }
 
-    public Task(String taskId, String comment, String startTime, String endTime)
-            throws NotExpectedTimeOrderException, EmptyTimeFieldException,
-            InvalidTimeFieldException, InvalidTaskIdException, NoTaskIdException {
-
+    public Task(String taskId, String comment, String startTime, String endTime) {
         this(taskId, comment, timeToLocalTime(startTime), timeToLocalTime(endTime));
     }
 
-    public Task(String taskId) throws InvalidTaskIdException, NoTaskIdException {
+    public Task(String taskId) {
         this.setTaskId(taskId);
+    }
+
+    private static LocalTime timeToLocalTime(String time) {
+        // Regex time pattern
+        String timePattern = "^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$";
+
+        if (time == null) {
+            throw new EmptyTimeFieldException("The time is missing");
+        }
+
+        if (time.matches(timePattern)) {
+            int hour = Integer.parseInt(time.split(":")[0]);
+            int min = Integer.parseInt(time.split(":")[1]);
+            return timeToLocalTime(hour, min);
+        } else {
+            throw new InvalidTimeFieldException("The time format is invalid!");
+        }
+    }
+
+    private static LocalTime timeToLocalTime(int hour, int min) {
+        if (hour < 0 || hour > 24 || min < 0 || min > 60) {
+            throw new InvalidTimeFieldException("The time data is invalid!");
+        } else {
+            return LocalTime.of(hour, min);
+        }
     }
 
     String getTaskId() {
         return taskId;
     }
 
-    void setTaskId(String taskId) throws InvalidTaskIdException, NoTaskIdException {
-        if (taskId == null) throw new NoTaskIdException("TaskID is missing");
+    void setTaskId(String taskId) {
+        if (taskId == null) {
+            throw new NoTaskIdException("TaskID is missing");
+        }
 
         if (isValidTaskId(taskId)) {
             this.taskId = taskId;
@@ -73,7 +84,7 @@ public class Task implements Comparable<Task> {
         return startTime;
     }
 
-    void setStartTime(LocalTime startTime) throws NotExpectedTimeOrderException, EmptyTimeFieldException {
+    void setStartTime(LocalTime startTime) {
         if (startTime == null) {
             throw new EmptyTimeFieldException("StartTimeField cannot be empty!");
         }
@@ -90,8 +101,7 @@ public class Task implements Comparable<Task> {
 
     }
 
-    void setStartTime(String startTime)
-            throws NotExpectedTimeOrderException, EmptyTimeFieldException, InvalidTimeFieldException {
+    void setStartTime(String startTime) {
 
         if (startTime == null || startTime.isBlank()) {
             throw new EmptyTimeFieldException("TimeField cannot be empty!");
@@ -100,8 +110,7 @@ public class Task implements Comparable<Task> {
         }
     }
 
-    void setStartTime(int startHour, int startMin)
-            throws NotExpectedTimeOrderException, EmptyTimeFieldException, InvalidTimeFieldException {
+    void setStartTime(int startHour, int startMin) {
         setStartTime(timeToLocalTime(startHour, startMin));
     }
 
@@ -109,55 +118,33 @@ public class Task implements Comparable<Task> {
         return endTime;
     }
 
-    void setEndTime(String endTime)
-            throws NotExpectedTimeOrderException, EmptyTimeFieldException, InvalidTimeFieldException {
-        setEndTime(timeToLocalTime(endTime));
-    }
+    void setEndTime(LocalTime endTime) {
 
-    void setEndTime(LocalTime endTime) throws NotExpectedTimeOrderException, EmptyTimeFieldException {
+        if (endTime == null) {
+            throw new EmptyTimeFieldException("EndTime cannot be empty!");
+        }
+
         if (this.startTime != null && this.startTime.isAfter(endTime)) {
             throw new NotExpectedTimeOrderException("The new End time is before the current EndTime");
-        } else {
+        }
             this.endTime = endTime;
-            if (this.startTime != null && !Util.isMultipleQuarterHour(this.startTime, this.endTime)) {
-                this.endTime = Util.roundToMultipleQuarterHour(this.startTime, endTime);
-            } else {
-                this.endTime = endTime;
-            }
+        if (this.startTime != null && !Util.isMultipleQuarterHour(this.startTime, this.endTime)) {
+            this.endTime = Util.roundToMultipleQuarterHour(this.startTime, endTime);
         }
     }
 
-    void setEndTime(int endHour, int endMin)
-            throws NotExpectedTimeOrderException, EmptyTimeFieldException, InvalidTimeFieldException {
+    void setEndTime(String endTime) {
 
+        if (endTime == null || endTime.isBlank()) {
+            throw new EmptyTimeFieldException("TimeField cannot be empty!");
+        } else {
+            setEndTime(timeToLocalTime(endTime));
+        }
+    }
+
+    void setEndTime(int endHour, int endMin) {
         setEndTime(timeToLocalTime(endHour, endMin));
     }
-
-
-    private static LocalTime timeToLocalTime(String time) throws InvalidTimeFieldException, EmptyTimeFieldException {
-        String timePattern = "^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$";
-
-        if (time == null) {
-            throw new EmptyTimeFieldException("The time is missing");
-        }
-
-        if (time.matches(timePattern)) {
-            int hour = Integer.parseInt(time.split(":")[0]);
-            int min = Integer.parseInt(time.split(":")[1]);
-            return timeToLocalTime(hour, min);
-        } else {
-            throw new InvalidTimeFieldException("The time format is invalid!");
-        }
-    }
-
-    private static LocalTime timeToLocalTime(int hour, int min) throws InvalidTimeFieldException {
-        if (hour < 0 || hour > 24 || min < 0 || min > 60) {
-            throw new InvalidTimeFieldException("The time data is invalid!");
-        } else {
-            return LocalTime.of(hour, min);
-        }
-    }
-
 
     public boolean isValidTaskId(String taskId) {
         return (isValidRedmineTaskId(taskId) || isValidLTTTaskId(taskId));
@@ -183,34 +170,37 @@ public class Task implements Comparable<Task> {
         return this.taskId.matches(LTT_TASK_ID_PATTERN);
     }
 
-    long getMinPerTask() throws EmptyTimeFieldException {
+    long getMinPerTask() {
 
         if (this.startTime == null || this.endTime == null) {
-            throw new EmptyTimeFieldException("The time fields are empty!");
+            throw new EmptyTimeFieldException("One of the time field is empty!");
         }
-            return (endTime.getHour() - startTime.getHour()) * 60 - startTime.getMinute() + endTime.getMinute();
+        return (endTime.getHour() - startTime.getHour()) * 60 - startTime.getMinute() + endTime.getMinute();
     }
 
     @Override
     public int compareTo(Task o) {
+
         //1st level - start times
-        int timeComparation = this.startTime.compareTo(o.getStartTime());
+        int timeComp = this.startTime.compareTo(o.getStartTime());
+
         //2nd level - end times
-        if (timeComparation == 0) {
+        if (timeComp == 0) {
             if (this.endTime == null) {
-                timeComparation = -1;
+                timeComp = -1;
             } else if (o.getEndTime() == null) {
-                timeComparation = 1;
+                timeComp = 1;
             } else {
-                timeComparation = this.endTime.compareTo(o.getEndTime());
+                timeComp = this.endTime.compareTo(o.getEndTime());
             }
         }
+
         //3rd level taskID
-        if (timeComparation == 0) {
-            timeComparation = this.taskId.compareTo(o.getTaskId());
+        if (timeComp == 0) {
+            timeComp = this.taskId.compareTo(o.getTaskId());
         }
 
-        return timeComparation;
+        return timeComp;
     }
 
     @Override

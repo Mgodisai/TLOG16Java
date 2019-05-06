@@ -27,7 +27,7 @@ public class TimeLogger {
                .isEmpty();
     }
 
-    public void addMonth(WorkMonth wm) throws NotNewMonthException{
+    public void addMonth(WorkMonth wm) {
         if (isNewMonth(wm)) {
             months.add(wm);
             System.out.println(wm.getDate()+ " successfuly added!");

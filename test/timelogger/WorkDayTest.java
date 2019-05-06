@@ -66,6 +66,8 @@ class WorkDayTest {
             assertEquals(0, day2.getSumPerDay());
             assertThrows(NegativeMinutesOfWorkException.class, () -> day2.setRequiredMinPerDay(-450));
             assertThrows(FutureWorkException.class, () -> day2.setActualDay(2019,12,31));
+            day2.addTask(task5);
+            assertThrows(EmptyTimeFieldException.class, () -> day2.getSumPerDay());
 
             WorkDay day3 = new WorkDay(2019,3,18);
             day3.addTask(task1);

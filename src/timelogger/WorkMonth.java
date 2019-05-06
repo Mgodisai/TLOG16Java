@@ -57,7 +57,7 @@ public class WorkMonth implements Comparable<WorkMonth> {
         return wd.getActualDay().getMonthValue()==this.date.getMonthValue();
     }
 
-    public void addWorkDay(WorkDay wd, boolean isWeekendEnabled) throws WeekendNotEnabledException, NotNewDateException, NotTheSameMonthException{
+    public void addWorkDay(WorkDay wd, boolean isWeekendEnabled) {
 
         if (!isSameMonth(wd)) {
             throw new NotTheSameMonthException("This day is not in this month");
@@ -76,7 +76,7 @@ public class WorkMonth implements Comparable<WorkMonth> {
             Collections.sort(days);
     }
 
-    public void addWorkDay(WorkDay wd) throws WeekendNotEnabledException, NotNewDateException, NotTheSameMonthException {
+    public void addWorkDay(WorkDay wd) {
 
         addWorkDay(wd, false);
 

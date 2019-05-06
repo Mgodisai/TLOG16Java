@@ -1,6 +1,6 @@
 package timelogger.exceptions;
 
-public class NotNewDateException extends Exception {
+public class NotNewDateException extends RuntimeException {
 
     public NotNewDateException(String errorMessage) {
         super(errorMessage);

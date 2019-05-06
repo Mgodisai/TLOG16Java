@@ -30,7 +30,7 @@ public class Util {
         return isWeekday(LocalDate.now());
     }
 
-    public static long minPerTask(LocalTime startTime, LocalTime endTime) throws EmptyTimeFieldException, NotExpectedTimeOrderException {
+    public static long minPerTask(LocalTime startTime, LocalTime endTime) {
         if (startTime == null || endTime == null) {
             throw new EmptyTimeFieldException("The time fields are empty!");
         }
@@ -43,7 +43,7 @@ public class Util {
 
     }
 
-    public static boolean isMultipleQuarterHour(LocalTime startTime, LocalTime endTime) throws EmptyTimeFieldException, NotExpectedTimeOrderException {
+    public static boolean isMultipleQuarterHour(LocalTime startTime, LocalTime endTime) {
         return minPerTask(startTime, endTime) % 15 == 0;
     }
 
@@ -52,7 +52,7 @@ public class Util {
     }
 
     public static boolean isSeparatedTime(List<Task> tasks, Task t) {
-        if (tasks.size() == 0) {
+        if (tasks.size() == 0 || (t.getStartTime()==null && t.getEndTime() == null)) {
             return true;
         }
         LocalTime startTime = t.getStartTime();

@@ -10,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class WorkMonthTest {
 
-    Task task1, task2;
+    Task task1, task2, task3;
 
-    WorkDay wd1, wd2, wd2b, wd3, wd4, wd5;
+    WorkDay wd1, wd2, wd2b, wd3, wd4, wd5, wd6;
 
     @DisplayName("Test tasks")
     @BeforeEach
@@ -22,6 +22,7 @@ class WorkMonthTest {
 
             task1 = new Task("1111", "First test task1", "7:30", "8:45");
             task2 = new Task("2222", "Second test task1", "8:45", "09:45");
+            task3 = new Task("2222");
 
             wd1 = new WorkDay(420, 2016, 9,12);
             wd2 = new WorkDay(420, 2016, 9,1);
@@ -31,6 +32,7 @@ class WorkMonthTest {
             wd4 = new WorkDay(420, 2019, 4, 30);
 
             wd5 = new WorkDay(2016,8,28);
+            wd6 = new WorkDay(2019, 3, 1);
 
     }
     @Test
@@ -52,6 +54,10 @@ class WorkMonthTest {
         assertEquals(0, wm2.getSumPerMonth());
         assertEquals(0, wm2.getExtraMinPerMonth());
         assertEquals(0, wm2.getRequiredMinPerMonth());
+
+        wd6.addTask(task3);
+        wm2.addWorkDay(wd6);
+        assertThrows(EmptyTimeFieldException.class, () -> wm2.getSumPerMonth());
 
         WorkMonth wm3 = new WorkMonth(2019, 4);
         wm3.addWorkDay(wd3);

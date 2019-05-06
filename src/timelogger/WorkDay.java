@@ -16,38 +16,32 @@ public class WorkDay implements Comparable<WorkDay> {
     private LocalDate actualDay;
     private long sumPerDay;
 
-    private static final long defaultRequiredMinPerDay=450;
+    private static final long DEFAULT_REQUIRED_MIN_PER_DAY = 450;
 
-    public WorkDay(long requiredMinPerDay, LocalDate actualDay)
-            throws NegativeMinutesOfWorkException, FutureWorkException {
-        this.setRequiredMinPerDay(requiredMinPerDay);
+    public WorkDay(long requiredMinPerDay, LocalDate actualDay) {
+        setRequiredMinPerDay(requiredMinPerDay);
         setActualDay(actualDay);
         this.tasks = new ArrayList<>();
     }
 
-    public WorkDay(long requiredMinPerDay, int year, int month, int day)
-            throws NegativeMinutesOfWorkException, FutureWorkException {
+    public WorkDay(long requiredMinPerDay, int year, int month, int day) {
         this(requiredMinPerDay, LocalDate.of(year, month, day));
     }
 
-    public WorkDay(int year, int month, int day)
-            throws NegativeMinutesOfWorkException, FutureWorkException {
-        this(defaultRequiredMinPerDay, LocalDate.of(year, month, day));
+    public WorkDay(int year, int month, int day) {
+        this(DEFAULT_REQUIRED_MIN_PER_DAY, LocalDate.of(year, month, day));
     }
 
-    public WorkDay(long requiredMinPerDay)
-            throws NegativeMinutesOfWorkException, FutureWorkException {
+    public WorkDay(long requiredMinPerDay) {
         this(requiredMinPerDay, LocalDate.now());
     }
 
-    public WorkDay(LocalDate actualDay)
-            throws NegativeMinutesOfWorkException, FutureWorkException {
-        this(defaultRequiredMinPerDay, actualDay);
+    public WorkDay(LocalDate actualDay) {
+        this(DEFAULT_REQUIRED_MIN_PER_DAY, actualDay);
     }
 
-    public WorkDay()
-            throws NegativeMinutesOfWorkException, FutureWorkException {
-        this(defaultRequiredMinPerDay, LocalDate.now());
+    public WorkDay() {
+        this(DEFAULT_REQUIRED_MIN_PER_DAY, LocalDate.now());
     }
 
     List<Task> getTasks() {
@@ -64,18 +58,12 @@ public class WorkDay implements Comparable<WorkDay> {
 
     long getSumPerDay() {
 
-        return this.tasks.stream()
-                .mapToLong(i-> {
-                    try {
-                        return i.getMinPerTask();
-                    } catch (EmptyTimeFieldException e) {
-                        return 0;
-                    }
-                })
+        return sumPerDay=this.tasks.stream()
+                .mapToLong(i-> i.getMinPerTask())
                 .sum();
     }
 
-    public void setActualDay(LocalDate actualDay) throws FutureWorkException {
+    public void setActualDay(LocalDate actualDay) {
         if (actualDay.isAfter(LocalDate.now())) {
             throw new FutureWorkException("Actual Day can not be later than today!");
         } else {
@@ -83,11 +71,11 @@ public class WorkDay implements Comparable<WorkDay> {
         }
     }
 
-    public void setActualDay(int year, int month, int day) throws FutureWorkException {
+    public void setActualDay(int year, int month, int day) {
         setActualDay(LocalDate.of(year, month, day));
     }
 
-    public void setRequiredMinPerDay(long requiredMinPerDay) throws NegativeMinutesOfWorkException {
+    public void setRequiredMinPerDay(long requiredMinPerDay) {
         if (requiredMinPerDay<0) {
             throw new NegativeMinutesOfWorkException("RequiredMinPerDay can not be negative!");
         } else {
@@ -109,29 +97,10 @@ public class WorkDay implements Comparable<WorkDay> {
             System.out.println("The object is null");
             return;
         }
+        if (!Util.isSeparatedTime(this.tasks, t)) throw new NotSeparatedTimesException(t.toString() + " can not add to WorkDay");
 
-        boolean isSeparated=Util.isSeparatedTime(this.tasks, t);
-
-        if (!isSeparated) throw new NotSeparatedTimesException(t.toString() + " can not add to WorkDay");
-
-        boolean isMultipleQuarterHour = false;
-
-        try {
-            isMultipleQuarterHour = Util.isMultipleQuarterHour(t.getStartTime(), t.getEndTime());
-        } catch (EmptyTimeFieldException e) {
-            if (t.getStartTime()!=null && t.getEndTime()==null) {
-                isMultipleQuarterHour=true;
-            }
-        } catch (NotExpectedTimeOrderException e) {
-            // isMultipleQuarterHour remains false
-        }
-
-        if (isSeparated && isMultipleQuarterHour) {
-            tasks.add(t);
-            System.out.println(t.toString()+ " successfully added");
-        } else {
-            System.out.println(t.toString() + " can not add to WorkDay");
-        }
+        tasks.add(t);
+        System.out.println(t.toString()+ " successfully added");
     }
 
 
